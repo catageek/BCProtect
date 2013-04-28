@@ -1,0 +1,9 @@
+# config file for BCProtect bukkit plugin.
+
+# set true if you want a lot debug messages on the console
+debugQuadtree: false
+debugRegions: false
+
+# set false to protect the network against grief
+canbuild: false 
+
