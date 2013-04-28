@@ -11,7 +11,7 @@ import com.github.catageek.BCProtect.Regions.RegionBuilder;
 public final class BCProtect extends JavaPlugin {
 	public static Logger log = Logger.getLogger("Minecraft");
 	public static BCProtect myPlugin;
-	public static boolean debugQuadtree = false;
+	public static boolean debugQuadtree = BCProtect.myPlugin.getConfig().getBoolean("debugQuadtree");
 	public static String logPrefix = "BCProtect.";
 
 	public static int minLeaf = 16;
@@ -19,15 +19,13 @@ public final class BCProtect extends JavaPlugin {
 	public static int MaxListSize = 16;
 	public static PersistentQuadtree tree;
 	private static RegionBuilder rb;
-	public static boolean debugRegions = false;
-	public static boolean canbuild = true;
+	public static boolean debugRegions = BCProtect.myPlugin.getConfig().getBoolean("debugRegions");
+	public static boolean canbuild = BCProtect.myPlugin.getConfig().getBoolean("canbuild");
 	public static String permprefix = "bytecart.";
 	public static Location location = new Location(null, 0, 0, 0);
 
 	public void onEnable(){
 		log.info("BCProtect plugin has been enabled.");
-
-//		debugQuadtree = true;
 
 		myPlugin = this;
 
@@ -37,7 +35,7 @@ public final class BCProtect extends JavaPlugin {
 
 		getServer().getPluginManager().registerEvents(new BCProtectListener(), this);
 		
-		if (BCProtect.canbuild)
+		if (! BCProtect.canbuild)
 			getServer().getPluginManager().registerEvents(new CanBuildListener(), this);
 			
 	}
