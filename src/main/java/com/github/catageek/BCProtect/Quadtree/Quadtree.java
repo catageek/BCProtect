@@ -11,6 +11,9 @@ import com.github.catageek.BCProtect.BCProtect;
 /**
  * Class implementing a Quadtree
  */
+/**
+ * 
+ */
 public class Quadtree implements Parent {
 
 	private Node head;
@@ -20,7 +23,6 @@ public class Quadtree implements Parent {
 	 * Constructor of the tree.
 	 * 
 	 * @param p the center of the tree
-	 * @param lm a class that will return new instances of the container of the objects to store
 	 */
 	public Quadtree(Point p) {
 		head = new Node(p.getPoint2d(), BCProtect.initLeaf, this);
@@ -66,6 +68,11 @@ public class Quadtree implements Parent {
 		return false;
 	}
 
+	/**
+	 * Remove the data associated with a point
+	 *
+	 * @param p the point
+	 */
 	public void remove(Point p) {
 		if (BCProtect.debugQuadtree)
 			BCProtect.log.info(BCProtect.logPrefix + "Quadtree:remove: check if point hash " + p.hashCode() + " is in map");

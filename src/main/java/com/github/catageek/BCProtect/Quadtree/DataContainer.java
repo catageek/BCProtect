@@ -1,6 +1,9 @@
 package com.github.catageek.BCProtect.Quadtree;
 
 
+/**
+ * Class implementing an object we can pass to the tree for storage
+ */
 final public class DataContainer {
 
 	private Region region;

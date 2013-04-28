@@ -14,6 +14,9 @@ import com.github.catageek.BCProtect.Quadtree.Quadtree;
 import com.github.catageek.BCProtect.Quadtree.Region;
 import com.github.catageek.BCProtect.Regions.Cuboid;
 
+/**
+ * Saves and restore data of the Quadtree
+ */
 public final class PersistentQuadtree {
 
 	private SQLManager sqlmanager = new SQLManager(BCProtect.myPlugin, "BCProtect", BCProtect.log);
@@ -25,6 +28,12 @@ public final class PersistentQuadtree {
 		quadtree = this.loadTree();
 	}
 
+	/**
+	 * Store a content.
+	 *
+	 *
+	 * @param content content to store
+	 */
 	public void put(DataContainer content) {
 		this.addRegionToSQL(content.getRegion(), content.getAttachedPoint());
 		quadtree.put(content);
@@ -43,6 +52,11 @@ public final class PersistentQuadtree {
 		this.removeSQL(p);
 	}
 
+	/**
+	 * initialize tables
+	 *
+	 *
+	 */
 	private void createTable() {
 		String query;
 		query ="CREATE TABLE IF NOT EXISTS refpoint" +
@@ -74,6 +88,12 @@ public final class PersistentQuadtree {
 
 	}
 
+	/**
+	 * load the tree from the database
+	 *
+	 *
+	 * @return
+	 */
 	private Quadtree loadTree() {
 		StringBuilder query = new StringBuilder("SELECT idx,rx,ry,rz FROM refpoint;");
 		ResultSet rep = sqlmanager.execute(query.toString());
@@ -103,8 +123,10 @@ public final class PersistentQuadtree {
 			e.printStackTrace();
 		}
 
+		// we compute the center of the tree
 		Quadtree q = new Quadtree(this.computeCenter(dclist));
 
+		// and we feed the beast
 		Iterator<DataContainer> it = dclist.iterator();
 		while(it.hasNext()) {
 			dc = it.next();
@@ -150,6 +172,7 @@ public final class PersistentQuadtree {
 		sqlmanager.close();
 	}
 
+	// compute the median of x and z
 	private Point computeCenter(List<DataContainer> list) {
 		long x = 0, z = 0, wtotal = 0;
 		Iterator<DataContainer> it = list.iterator();
@@ -175,6 +198,14 @@ public final class PersistentQuadtree {
 
 	}
 
+	
+	/**
+	 * Get the unique index number given to a reference point
+	 *
+	 *
+	 * @param p the reference point
+	 * @return the index we can use on 'cuboids' table
+	 */
 	private long getIndex(Point p) {
 		StringBuilder query = new StringBuilder("SELECT idx FROM refpoint WHERE rx=");
 		query.append(p.getX()).append(" AND ry=").append(p.getY()).append(" AND rz=").append(p.getZ())

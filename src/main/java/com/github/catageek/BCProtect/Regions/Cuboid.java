@@ -15,12 +15,15 @@ import com.github.catageek.BCProtect.Quadtree.Region;
  * Point A coordinates are always
  * inferior to Point B coordinates
  */
-
 public final class Cuboid implements Region, Cloneable {
 	
 	private List<Point> list = new ArrayList<Point>();
 	private Object data;
 	
+	/* (non-Javadoc)
+	 * @see com.github.catageek.BCProtect.Quadtree.Region#nullData()
+	 */
+	@Override
 	public final void nullData() {
 		this.data = null;
 	}
@@ -81,6 +84,9 @@ public final class Cuboid implements Region, Cloneable {
 	}
 
 
+	/* (non-Javadoc)
+	 * @see com.github.catageek.BCProtect.Quadtree.Region#isCollidingXAxis(int)
+	 */
 	@Override
 	public boolean isCollidingXAxis(int z) {
 		boolean ret = getA().getZ() < z && getB().getZ() >= z;
@@ -89,6 +95,9 @@ public final class Cuboid implements Region, Cloneable {
 		return ret;
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.github.catageek.BCProtect.Quadtree.Region#isCollidingZAxis(int)
+	 */
 	@Override
 	public boolean isCollidingZAxis(int x) {
 		boolean ret = getA().getX() < x && getB().getX() >= x;
@@ -97,6 +106,9 @@ public final class Cuboid implements Region, Cloneable {
 		return ret;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.github.catageek.BCProtect.Quadtree.Region#getPointIterator()
+	 */
 	@Override
 	public Iterator<Point> getPointIterator() {
 		return list.listIterator();
@@ -135,6 +147,9 @@ public final class Cuboid implements Region, Cloneable {
 		return list.get(1);
 	}
 
+	/* (non-Javadoc)
+	 * @see com.github.catageek.BCProtect.Quadtree.Region#getData()
+	 */
 	@Override
 	public Object getData() {
 		return data;
@@ -145,6 +160,10 @@ public final class Cuboid implements Region, Cloneable {
 		return getA().toString() + "x" + getB().toString();
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#clone()
+	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public Cuboid clone() {
 		Cuboid c = null;
@@ -163,6 +182,9 @@ public final class Cuboid implements Region, Cloneable {
 		return new HashCodeBuilder(29,43).append(getA()).append(getB()).append(getData()).toHashCode();
 	}
 
+	/* (non-Javadoc)
+	 * @see com.github.catageek.BCProtect.Quadtree.Region#getWeight()
+	 */
 	@Override
 	public int getWeight() {
 		if (getB() == null)
