@@ -43,7 +43,10 @@ public final class RegionBuilder {
 	}
 
 	public void onPassRouter(Location loc, BlockFace from, BlockFace to, String name) {
-		Point p = getPoint(loc);
+		Point p = getPoint(loc.getBlock().getRelative(BlockFace.UP, 5).getLocation());
+
+		if (BCProtect.debugRegions)
+			BCProtect.log.info(BCProtect.logPrefix + " found router at pos " + loc.toString() + ", going to " + to.toString());
 
 		if (getState().equals(State.WAIT)) {
 			this.closeCuboid(loc.getBlock().getRelative(from, 7).getRelative(MathUtil.clockwise(from))
@@ -52,13 +55,13 @@ public final class RegionBuilder {
 			BCProtect.tree.put(currentContainer);
 			this.setState(State.READY);
 		}
-		if (BCProtect.tree.contains(loc.getX(), loc.getY(), loc.getZ()))
+		
+		if (BCProtect.tree.contains(loc.getX(), loc.getY(), loc.getZ())) {
+			postPassRouter(loc, to);
 			return;
+		}
 		if (getState().equals(State.UNDEFINED))
 			currentContainer = new DataContainer(new Cuboid(p, name), p);
-
-		if (BCProtect.debugRegions)
-			BCProtect.log.info(BCProtect.logPrefix + " found router at pos " + loc.toString());
 
 		this.openCuboid(loc.getBlock(), to, Delta.BC8010);
 		if (BCProtect.debugRegions)
@@ -70,6 +73,16 @@ public final class RegionBuilder {
 			BCProtect.log.info(BCProtect.logPrefix + " Inserting router cuboid " + currentContainer.getRegion());
 		BCProtect.tree.put(currentContainer);
 		setState(State.READY);
+		postPassRouter(loc, to);
+	}
+	
+	private void postPassRouter(Location loc, BlockFace to) {
+		currentContainer.setPoint(getPoint(loc.getBlock().getRelative(to, 6).
+				getRelative(MathUtil.clockwise(to))
+				.getLocation(BCProtect.location)));
+
+		if (BCProtect.debugRegions)
+			BCProtect.log.info(BCProtect.logPrefix + " setting ref point to " + currentContainer.getAttachedPoint().toString());
 	}
 
 	public void onMove(Location locFrom, Location locTo, BlockFace to) {
@@ -79,9 +92,8 @@ public final class RegionBuilder {
 			this.setState(State.READY);
 		}
 		if (BCProtect.tree.contains(locTo.getX(), locTo.getY(), locTo.getZ())) {
-/*			if (BCProtect.debugRegions)
-				BCProtect.log.info(BCProtect.logPrefix + " tree contains " + locTo.toString());
-*/			return;
+			this.setState(State.READY);
+			return;
 		}
 		if (this.getState().equals(State.READY)) {
 			this.openCuboid(locTo.getBlock(), to, Delta.DEFAULT);

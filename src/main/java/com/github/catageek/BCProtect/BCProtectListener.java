@@ -23,7 +23,7 @@ final class BCProtectListener implements Listener {
 	@EventHandler
 	public void onUpdaterPassRouter(UpdaterPassRouterEvent event) {
 		BCProtect.getRegionBuilder().onPassRouter(event.getBlock().getLocation(BCProtect.location),
-				event.getFrom(), event.getDirection(), event.getName());
+				event.getFrom(), event.getTo(), event.getName());
 	}
 
 	@EventHandler
