@@ -1,4 +1,4 @@
 name: BCProtect
 main: com.github.catageek.BCProtect.BCProtect
-version: 1.0.1
+version: 1.0.2
 depend: [SQLibrary]
