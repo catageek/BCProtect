@@ -19,7 +19,8 @@ public final class BCProtect extends JavaPlugin {
 	public static int MaxListSize = 16;
 	public static PersistentQuadtree tree;
 	private static RegionBuilder rb;
-	public static boolean debugRegions = false; 
+	public static boolean debugRegions = false;
+	public static boolean canbuild = true;
 	public static String permprefix = "bytecart.";
 	public static Location location = new Location(null, 0, 0, 0);
 
@@ -35,6 +36,10 @@ public final class BCProtect extends JavaPlugin {
 		rb = new RegionBuilder();
 
 		getServer().getPluginManager().registerEvents(new BCProtectListener(), this);
+		
+		if (BCProtect.canbuild)
+			getServer().getPluginManager().registerEvents(new CanBuildListener(), this);
+			
 	}
 
 	public void onDisable(){ 

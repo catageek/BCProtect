@@ -9,13 +9,13 @@ import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
-
 import com.github.catageek.BCProtect.Regions.RegionBuilder;
 import com.github.catageek.ByteCart.Event.UpdaterMoveEvent;
 import com.github.catageek.ByteCart.Event.UpdaterPassRouterEvent;
+import com.github.catageek.ByteCart.Event.UpdaterPassStationEvent;
 
 final class BCProtectListener implements Listener {
 
@@ -23,7 +23,7 @@ final class BCProtectListener implements Listener {
 	@EventHandler
 	public void onUpdaterPassRouter(UpdaterPassRouterEvent event) {
 		BCProtect.getRegionBuilder().onPassRouter(event.getBlock().getLocation(BCProtect.location),
-				event.getFrom(), event.getTo(), event.getName());
+				event.getFrom(), event.getTo(), event.getName(), event.getUpdaterLevel());
 	}
 
 	@EventHandler
@@ -33,20 +33,14 @@ final class BCProtectListener implements Listener {
 		BCProtect.getRegionBuilder().onMove(from, to, this.getDirection(from, to));
 	}
 
-
-	@EventHandler (ignoreCancelled = true)
-	public void onBlockPlace(BlockPlaceEvent event) {
-		if (! checkPermission(event.getPlayer(), event.getBlock().getLocation(BCProtect.location), "canbuild")) {
-			event.setCancelled(true);
-		}
+	@EventHandler
+	public void onUpdaterPassStation(UpdaterPassStationEvent event) {
+		BCProtect.getRegionBuilder().onPassStation(event.getBlock().getLocation(BCProtect.location),
+				event.getDirection(), event.getName(), event.getUpdaterLevel());
 	}
 
-	@EventHandler (ignoreCancelled = true)
+	@EventHandler (ignoreCancelled = true, priority = EventPriority.MONITOR)
 	public void onBlockBreak(BlockBreakEvent event) {
-		if (! checkPermission(event.getPlayer(), event.getBlock().getLocation(BCProtect.location), "canbuild")) {
-			event.setCancelled(true);
-			return;
-		}
 		BCProtect.tree.remove(RegionBuilder.getPoint(BCProtect.location));
 	}
 
@@ -63,7 +57,7 @@ final class BCProtectListener implements Listener {
 				return BlockFace.WEST;
 	}
 
-	private boolean checkPermission(Player p, Location loc, String permission) {
+	static boolean checkPermission(Player p, Location loc, String permission) {
 		Set<Object> set = BCProtect.tree.get(loc.getX(), loc.getY(), loc.getZ());
 		Iterator<Object> it = set.iterator();
 
@@ -78,7 +72,7 @@ final class BCProtectListener implements Listener {
 		return true;
 	}
 
-	private void sendError(Player player, String message) {
+	static void sendError(Player player, String message) {
 		if (player.isOnline())
 			player.sendMessage(ChatColor.DARK_GREEN+"[BCProtect] " + ChatColor.RED + message);
 	}

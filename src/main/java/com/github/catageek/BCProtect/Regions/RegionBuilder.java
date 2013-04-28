@@ -1,5 +1,8 @@
 package com.github.catageek.BCProtect.Regions;
 
+import java.util.Iterator;
+import java.util.Set;
+
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -7,6 +10,7 @@ import org.bukkit.block.BlockFace;
 import com.github.catageek.BCProtect.BCProtect;
 import com.github.catageek.BCProtect.Quadtree.DataContainer;
 import com.github.catageek.BCProtect.Quadtree.Point;
+import com.github.catageek.ByteCart.Routing.Updater.Level;
 import com.github.catageek.ByteCart.Util.MathUtil;
 
 public final class RegionBuilder {
@@ -23,9 +27,9 @@ public final class RegionBuilder {
 
 	private enum Delta {
 		BC8010(6,1,6,6,7,6),
-		BC900x(3,3,1,3,0,2),
-		BC9000(2,2,1,3,0,4),
-		BC9001(2,2,2,3,0,5),
+		BC900x(2,3,0,2,1,1),
+		BC9000(1,3,0,1,1,2),
+		BC9001(2,1,1,2,3,5),
 		BC7001(2,2,1,3,1,0),
 		OTHER(1,1,1,3,0,0),
 		DEFAULT(0,1,0,0,1,0);
@@ -42,40 +46,47 @@ public final class RegionBuilder {
 		}
 	}
 
-	public void onPassRouter(Location loc, BlockFace from, BlockFace to, String name) {
+	public void onPassRouter(Location loc, BlockFace from, BlockFace to, String name, Level level) {
 		Point p = getPoint(loc.getBlock().getRelative(BlockFace.UP, 5).getLocation());
 
-		if (BCProtect.debugRegions)
-			BCProtect.log.info(BCProtect.logPrefix + " found router at pos " + loc.toString() + ", going to " + to.toString());
+		if (level.equals(Level.REGION) || level.equals(Level.BACKBONE)) {
+			if (BCProtect.debugRegions)
+				BCProtect.log.info(BCProtect.logPrefix + " found router at pos " + loc.toString() + ", going to " + to.toString());
 
-		if (getState().equals(State.WAIT)) {
-			this.closeCuboid(loc.getBlock().getRelative(from, 7).getRelative(MathUtil.clockwise(from))
-					.getRelative(BlockFace.UP, 2),
-					from.getOppositeFace(), Delta.DEFAULT);
-			BCProtect.tree.put(currentContainer);
-			this.setState(State.READY);
+			if (getState().equals(State.WAIT)) {
+				this.closeCuboid(loc.getBlock().getRelative(from, 7).getRelative(MathUtil.clockwise(from))
+						.getRelative(BlockFace.UP, 2),
+						from.getOppositeFace(), Delta.DEFAULT);
+				BCProtect.tree.put(currentContainer);
+				this.setState(State.READY);
+			}
 		}
-		
-		if (BCProtect.tree.contains(loc.getX(), loc.getY(), loc.getZ())) {
-			postPassRouter(loc, to);
-			return;
-		}
-		if (getState().equals(State.UNDEFINED))
+
+		if (getState().equals(State.UNDEFINED)) {
 			currentContainer = new DataContainer(new Cuboid(p, name), p);
+			setState(State.READY);
+		}
 
-		this.openCuboid(loc.getBlock(), to, Delta.BC8010);
-		if (BCProtect.debugRegions)
-			BCProtect.log.info(BCProtect.logPrefix + " closing router at pos " + loc.toString());
-		this.closeCuboid(loc.getBlock(), to, Delta.BC8010);
-		currentContainer.setPoint(p);
+		if (level.equals(Level.REGION) || level.equals(Level.BACKBONE)) {
+			if (RegionBuilder.containsPermission(loc, name)) {
+				postPassRouter(loc, to);
+				return;
+			}
 
-		if (BCProtect.debugRegions)
-			BCProtect.log.info(BCProtect.logPrefix + " Inserting router cuboid " + currentContainer.getRegion());
-		BCProtect.tree.put(currentContainer);
-		setState(State.READY);
+			this.openCuboid(loc.getBlock(), to, Delta.BC8010);
+			if (BCProtect.debugRegions)
+				BCProtect.log.info(BCProtect.logPrefix + " closing router at pos " + loc.toString());
+			this.closeCuboid(loc.getBlock(), to, Delta.BC8010);
+			currentContainer.setPoint(p);
+
+			if (BCProtect.debugRegions)
+				BCProtect.log.info(BCProtect.logPrefix + " Inserting router cuboid " + currentContainer.getRegion());
+			BCProtect.tree.put(currentContainer);
+			setState(State.READY);
+		}
 		postPassRouter(loc, to);
 	}
-	
+
 	private void postPassRouter(Location loc, BlockFace to) {
 		currentContainer.setPoint(getPoint(loc.getBlock().getRelative(to, 6).
 				getRelative(MathUtil.clockwise(to))
@@ -86,13 +97,15 @@ public final class RegionBuilder {
 	}
 
 	public void onMove(Location locFrom, Location locTo, BlockFace to) {
+		if (getState().equals(State.UNDEFINED))
+			return;
+
 		if (this.currentDirection != null && ! this.currentDirection.equals(to) && this.getState() == State.WAIT) {
 			this.closeCuboid(locFrom.getBlock(), currentDirection, Delta.DEFAULT);
 			BCProtect.tree.put(currentContainer);
 			this.setState(State.READY);
 		}
 		if (BCProtect.tree.contains(locTo.getX(), locTo.getY(), locTo.getZ())) {
-			this.setState(State.READY);
 			return;
 		}
 		if (this.getState().equals(State.READY)) {
@@ -102,6 +115,37 @@ public final class RegionBuilder {
 		}
 	}
 
+	public void onPassStation(Location location, BlockFace to, String name, Level level) {
+
+		if (getState().equals(State.UNDEFINED) || ! level.equals(Level.LOCAL))
+			return;
+
+
+		if (BCProtect.debugRegions)
+			BCProtect.log.info(BCProtect.logPrefix + " found station at pos " + location.toString()
+					+ ", going to " + to.toString() + " with name " + name);
+
+		if (RegionBuilder.containsPermission(location, name)) {
+			return;
+		}
+
+		DataContainer save = currentContainer;
+		Point p = getPoint(location);		
+
+		currentContainer = new DataContainer(new Cuboid(p, name), p);
+
+		this.openCuboid(location.getBlock(), to, Delta.BC9001);
+		if (BCProtect.debugRegions)
+			BCProtect.log.info(BCProtect.logPrefix + " closing station at pos " + location.toString());
+		this.closeCuboid(location.getBlock(), to, Delta.BC9001);
+		currentContainer.setPoint(p);
+
+		if (BCProtect.debugRegions)
+			BCProtect.log.info(BCProtect.logPrefix + " Inserting station cuboid " + currentContainer.getRegion());
+		BCProtect.tree.put(currentContainer);
+		setState(State.READY);
+		currentContainer = save;
+	}
 
 	/**
 	 * @return the state
@@ -128,7 +172,7 @@ public final class RegionBuilder {
 		if (delta.py != 0)
 			block = block.getRelative(BlockFace.UP, delta.py);
 		if (delta.pz != 0)
-			block = block.getRelative(to.getOppositeFace(), delta.pz);
+			block = block.getRelative(to, delta.pz);
 		Point p = getPoint(block.getLocation());
 		if (BCProtect.debugRegions)
 			BCProtect.log.info(BCProtect.logPrefix + " Closing cuboid with point " + p.toString() + " and direction " + to.toString());
@@ -142,7 +186,7 @@ public final class RegionBuilder {
 		if (delta.ny != 0)
 			block = block.getRelative(BlockFace.DOWN, delta.ny);
 		if (delta.nz != 0)
-			block = block.getRelative(to, delta.nz);
+			block = block.getRelative(to.getOppositeFace(), delta.nz);
 		Point p = getPoint(block.getLocation());
 		if (BCProtect.debugRegions)
 			BCProtect.log.info(BCProtect.logPrefix + " Opening cuboid with point " + p.toString() + " and direction " + to.toString());
@@ -150,5 +194,16 @@ public final class RegionBuilder {
 		currentContainer.setRegion(cub);
 	}
 
+	private static boolean containsPermission(Location loc, String permission) {
+		Set<Object> set = BCProtect.tree.get(loc.getX(), loc.getY(), loc.getZ());
+		Iterator<Object> it = set.iterator();
+
+		while (it.hasNext()) {
+			if (((String)it.next()).equals(permission)) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 }
