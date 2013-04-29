@@ -13,3 +13,5 @@ enablePistons: false
 # set to false to prevent mobs spawn, attack, explode, teleport, etc.
 enableMobs: false
 
+# set to false to protect chest, furnaces, hoppers, droppers,etc. against grief/robbery
+canOpenInventory: false
