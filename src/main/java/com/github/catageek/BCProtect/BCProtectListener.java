@@ -12,6 +12,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+
 import com.github.catageek.BCProtect.Regions.RegionBuilder;
 import com.github.catageek.ByteCart.Event.UpdaterMoveEvent;
 import com.github.catageek.ByteCart.Event.UpdaterPassRouterEvent;
@@ -41,8 +42,9 @@ final class BCProtectListener implements Listener {
 
 	@EventHandler (ignoreCancelled = true, priority = EventPriority.MONITOR)
 	public void onBlockBreak(BlockBreakEvent event) {
-		BCProtect.tree.remove(RegionBuilder.getPoint(BCProtect.location));
+		Util.getQuadtree(event.getBlock()).remove(RegionBuilder.getPoint(BCProtect.location));
 	}
+	
 
 	private BlockFace getDirection(Location from, Location to) {
 		if (from.getBlockX() == to.getBlockX())
@@ -58,7 +60,7 @@ final class BCProtectListener implements Listener {
 	}
 
 	static boolean checkPermission(Player p, Location loc, String permission) {
-		Set<Object> set = BCProtect.tree.get(loc.getX(), loc.getY(), loc.getZ());
+		Set<Object> set = Util.getQuadtree(loc).get(loc.getX(), loc.getY(), loc.getZ());
 		Iterator<Object> it = set.iterator();
 
 		while (it.hasNext()) {

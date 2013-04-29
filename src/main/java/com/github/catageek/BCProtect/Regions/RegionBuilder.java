@@ -8,6 +8,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 
 import com.github.catageek.BCProtect.BCProtect;
+import com.github.catageek.BCProtect.Util;
 import com.github.catageek.BCProtect.Quadtree.DataContainer;
 import com.github.catageek.BCProtect.Quadtree.Point;
 import com.github.catageek.ByteCart.Routing.Updater.Level;
@@ -65,7 +66,7 @@ public final class RegionBuilder {
 				this.closeCuboid(loc.getBlock().getRelative(from, 7).getRelative(MathUtil.clockwise(from))
 						.getRelative(BlockFace.UP, 2),
 						from.getOppositeFace(), Delta.DEFAULT);
-				BCProtect.tree.put(currentContainer);
+				Util.getQuadtree(loc).put(currentContainer);
 				this.setState(State.READY);
 			}
 		}
@@ -125,12 +126,12 @@ public final class RegionBuilder {
 		if (this.currentDirection != null && ! this.currentDirection.equals(to) && this.getState() == State.WAIT) {
 			// we close the current cuboid
 			this.closeCuboid(locFrom.getBlock(), currentDirection, Delta.DEFAULT);
-			BCProtect.tree.put(currentContainer);
+			Util.getQuadtree(locFrom).put(currentContainer);
 			this.setState(State.READY);
 		}
 		
 		// check if the next block is already protected
-		if (BCProtect.tree.contains(locTo.getX(), locTo.getY(), locTo.getZ())) {
+		if (Util.getQuadtree(locFrom).contains(locTo.getX(), locTo.getY(), locTo.getZ())) {
 			return;
 		}
 		
@@ -189,7 +190,7 @@ public final class RegionBuilder {
 
 		if (BCProtect.debugRegions)
 			BCProtect.log.info(BCProtect.logPrefix + " Inserting box cuboid " + currentContainer.getRegion());
-		BCProtect.tree.put(currentContainer);
+		Util.getQuadtree(location).put(currentContainer);
 
 		// cuboid complete, next
 		setState(State.READY);
@@ -253,7 +254,7 @@ public final class RegionBuilder {
 	 * @return
 	 */
 	private static boolean containsPermission(Location loc, String permission) {
-		Set<Object> set = BCProtect.tree.get(loc.getX(), loc.getY(), loc.getZ());
+		Set<Object> set = Util.getQuadtree(loc).get(loc.getX(), loc.getY(), loc.getZ());
 		Iterator<Object> it = set.iterator();
 
 		while (it.hasNext()) {

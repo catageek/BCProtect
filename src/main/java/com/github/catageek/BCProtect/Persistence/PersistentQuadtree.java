@@ -19,11 +19,12 @@ import com.github.catageek.BCProtect.Regions.Cuboid;
  */
 public final class PersistentQuadtree {
 
-	private SQLManager sqlmanager = new SQLManager(BCProtect.myPlugin, "BCProtect", BCProtect.log);
+	private SQLManager sqlmanager;
 	private Quadtree quadtree;
 
 
-	public PersistentQuadtree() {
+	public PersistentQuadtree(String world) {
+		sqlmanager = new SQLManager(BCProtect.myPlugin, world, BCProtect.log);
 		createTable();
 		quadtree = this.loadTree();
 	}
