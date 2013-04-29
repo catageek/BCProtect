@@ -7,6 +7,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.bukkit.Location;
+
 import com.github.catageek.BCProtect.BCProtect;
 import com.github.catageek.BCProtect.Quadtree.DataContainer;
 import com.github.catageek.BCProtect.Quadtree.Point;
@@ -46,6 +48,10 @@ public final class PersistentQuadtree {
 
 	public boolean contains(double x, double y, double z) {
 		return quadtree.contains(x, y, z);
+	}
+
+	public boolean contains(Location loc) {
+		return this.contains(loc.getX(), loc.getY(), loc.getZ());
 	}
 
 	public void remove(Point p) {
