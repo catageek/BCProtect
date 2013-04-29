@@ -11,7 +11,8 @@ import com.github.catageek.BCProtect.Regions.RegionBuilder;
 public final class BCProtect extends JavaPlugin {
 	public static Logger log = Logger.getLogger("Minecraft");
 	public static BCProtect myPlugin;
-	public static boolean debugQuadtree = BCProtect.myPlugin.getConfig().getBoolean("debugQuadtree");
+	public static boolean debugQuadtree;
+	public static boolean debugRegions;
 	public static String logPrefix = "BCProtect.";
 
 	public static int minLeaf = 16;
@@ -19,8 +20,8 @@ public final class BCProtect extends JavaPlugin {
 	public static int MaxListSize = 16;
 	public static PersistentQuadtree tree;
 	private static RegionBuilder rb;
-	public static boolean debugRegions = BCProtect.myPlugin.getConfig().getBoolean("debugRegions");
-	public static boolean canbuild = BCProtect.myPlugin.getConfig().getBoolean("canbuild");
+
+	public static boolean canbuild;
 	public static String permprefix = "bytecart.";
 	public static Location location = new Location(null, 0, 0, 0);
 
@@ -28,6 +29,10 @@ public final class BCProtect extends JavaPlugin {
 		log.info("BCProtect plugin has been enabled.");
 
 		myPlugin = this;
+
+		this.saveDefaultConfig();
+
+		this.loadConfig();
 
 		tree = new PersistentQuadtree();
 
@@ -54,4 +59,22 @@ public final class BCProtect extends JavaPlugin {
 		return rb;
 
 	}
+	
+	protected final void loadConfig() {
+		debugQuadtree = BCProtect.myPlugin.getConfig().getBoolean("debugQuadtree");
+
+		if(debugQuadtree){
+			log.info("ByteCart : debug mode on quadtree is on.");
+		}
+
+		debugRegions = BCProtect.myPlugin.getConfig().getBoolean("debugRegions");
+		
+		if(debugQuadtree){
+			log.info("ByteCart : debug mode on regions is on.");
+		}
+		
+		canbuild = BCProtect.myPlugin.getConfig().getBoolean("canbuild");
+	}
+
+
 }
