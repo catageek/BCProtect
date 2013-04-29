@@ -86,19 +86,9 @@ public final class RegionBuilder {
 			}
 
 			// otherwise we store the box around the router
-			this.openCuboid(loc.getBlock(), to, Delta.BC8010);
-			if (BCProtect.debugRegions)
-				BCProtect.log.info(BCProtect.logPrefix + " closing router at pos " + loc.toString());
-			this.closeCuboid(loc.getBlock(), to, Delta.BC8010);
-			currentContainer.setPoint(p);
-
-			if (BCProtect.debugRegions)
-				BCProtect.log.info(BCProtect.logPrefix + " Inserting router cuboid " + currentContainer.getRegion());
-			BCProtect.tree.put(currentContainer);
-
-			// cuboid complete, next
-			setState(State.READY);
+			this.storeBox(loc, to, p, Delta.BC8010);
 		}
+		// give a new reference point
 		postPassRouter(loc, to);
 	}
 
@@ -184,21 +174,25 @@ public final class RegionBuilder {
 
 		currentContainer = new DataContainer(new Cuboid(p, name), p);
 
-		this.openCuboid(location.getBlock(), to, Delta.BC9001);
+		storeBox(location, to, p, Delta.BC9001);
+		
+		// restore variable
+		currentContainer = save;
+	}
+
+	private void storeBox(Location location, BlockFace to, Point p, Delta delta) {
+		this.openCuboid(location.getBlock(), to, delta);
 		if (BCProtect.debugRegions)
-			BCProtect.log.info(BCProtect.logPrefix + " closing station at pos " + location.toString());
-		this.closeCuboid(location.getBlock(), to, Delta.BC9001);
+			BCProtect.log.info(BCProtect.logPrefix + " closing box at pos " + location.toString());
+		this.closeCuboid(location.getBlock(), to, delta);
 		currentContainer.setPoint(p);
 
 		if (BCProtect.debugRegions)
-			BCProtect.log.info(BCProtect.logPrefix + " Inserting station cuboid " + currentContainer.getRegion());
+			BCProtect.log.info(BCProtect.logPrefix + " Inserting box cuboid " + currentContainer.getRegion());
 		BCProtect.tree.put(currentContainer);
 
 		// cuboid complete, next
 		setState(State.READY);
-		
-		// restore variable
-		currentContainer = save;
 	}
 
 	/**
@@ -235,6 +229,8 @@ public final class RegionBuilder {
 
 	private void openCuboid(Block block1, BlockFace to, Delta delta) {
 		Block block = block1;
+		if (BCProtect.debugRegions)
+			BCProtect.log.info(BCProtect.logPrefix + " adding " + delta.nx + "," +delta.ny + "," + delta.nz);
 		if (delta.nx != 0)
 			block = block.getRelative(MathUtil.anticlockwise(to), delta.nx);
 		if (delta.ny != 0)
