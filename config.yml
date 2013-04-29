@@ -10,3 +10,6 @@ canbuild: false
 # set to false to prevent pistons moves
 enablePistons: false
 
+# set to false to prevent mobs spawn, attack, explode, teleport, etc.
+enableMobs: false
+

@@ -6,6 +6,7 @@ import org.bukkit.Location;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.github.catageek.BCProtect.Listeners.CanBuildListener;
+import com.github.catageek.BCProtect.Listeners.MobListener;
 import com.github.catageek.BCProtect.Listeners.PistonListener;
 import com.github.catageek.BCProtect.Persistence.QuadtreeManager;
 import com.github.catageek.BCProtect.Regions.RegionBuilder;
@@ -27,6 +28,7 @@ public final class BCProtect extends JavaPlugin {
 	public static String permprefix = "bytecart.";
 	public static Location location = new Location(null, 0, 0, 0);
 	private static boolean enablePistons;
+	private static boolean enableMobs;
 
 	public void onEnable(){
 		log.info("BCProtect plugin has been enabled.");
@@ -48,6 +50,9 @@ public final class BCProtect extends JavaPlugin {
 
 		if (! BCProtect.enablePistons)
 			getServer().getPluginManager().registerEvents(new PistonListener(), this);
+
+		if (! BCProtect.enableMobs)
+			getServer().getPluginManager().registerEvents(new MobListener(), this);
 
 	}
 
@@ -81,6 +86,7 @@ public final class BCProtect extends JavaPlugin {
 
 		canbuild = BCProtect.myPlugin.getConfig().getBoolean("canbuild");
 		enablePistons = BCProtect.myPlugin.getConfig().getBoolean("enablePistons");
+		enableMobs = BCProtect.myPlugin.getConfig().getBoolean("enableMobs");
 	}
 
 	/**
