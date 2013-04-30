@@ -16,11 +16,16 @@ public class PlayerAccessListener implements Listener {
 
 	@EventHandler (ignoreCancelled = true)
 	public void onPlayerMove(PlayerMoveEvent event) {
-		Player player = event.getPlayer();
-		if (! player.isInsideVehicle() && ! Util.checkPermission(player, event.getTo(), "canAccess")) {
-			event.setCancelled(true);
-			Location loc = event.getFrom();
-			event.setFrom(loc.subtract(loc.getDirection()));
+		Location from = event.getFrom();
+		Location to = event.getTo();
+		if (from.getBlockX() != to.getBlockX()
+				|| from.getBlockZ() != to.getBlockZ()
+				|| from.getBlockY() != to.getBlockY()) {
+			Player player = event.getPlayer();
+			if (! player.isInsideVehicle() && ! Util.checkPermission(player, to, "canAccess")) {
+				event.setCancelled(true);
+				event.setFrom(from.subtract(from.getDirection()));
+			}
 		}
 	}
 
@@ -31,14 +36,14 @@ public class PlayerAccessListener implements Listener {
 			event.setCancelled(true);
 		}
 	}
-	
+
 	@EventHandler (ignoreCancelled = true)
 	public void onVehicleExit(VehicleExitEvent event) {
 		LivingEntity entity = event.getExited();
 		if (entity instanceof Player)
-		if (! Util.checkPermission((Player) entity, event.getVehicle().getLocation(BCProtect.location), "canAccess")) {
-			event.setCancelled(true);
-		}
+			if (! Util.checkPermission((Player) entity, event.getVehicle().getLocation(BCProtect.location), "canAccess")) {
+				event.setCancelled(true);
+			}
 	}
 
 }
