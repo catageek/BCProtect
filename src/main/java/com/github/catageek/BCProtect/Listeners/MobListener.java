@@ -42,7 +42,7 @@ public class MobListener implements Listener {
 	
 	@EventHandler (ignoreCancelled = true)
 	public void onEntityTarget(EntityTargetEvent event) {
-		if (! event.getEntityType().equals(EntityType.PLAYER)) {
+		if (! event.getEntityType().equals(EntityType.PLAYER) && event.getTarget() != null) {
 				Location loc = event.getTarget().getLocation(BCProtect.location);
 				if (Util.getQuadtree(loc).contains(loc))
 					event.setCancelled(true);
