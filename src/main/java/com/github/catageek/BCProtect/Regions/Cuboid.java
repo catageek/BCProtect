@@ -191,7 +191,7 @@ public final class Cuboid implements Region, Cloneable {
 	public int getWeight() {
 		if (getB() == null)
 			return 0;
-		return (getB().getX() - getA().getX()) * (getB().getY() - getA().getY() * (getB().getZ() - getA().getZ()));
+		return Math.abs((getB().getX() - getA().getX()) * (getB().getY() - getA().getY() * (getB().getZ() - getA().getZ())));
 	}
 
 }
