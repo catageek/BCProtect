@@ -16,14 +16,14 @@ public final class CanBuildListener implements Listener {
 
 	@EventHandler (ignoreCancelled = true)
 	public void onBlockPlace(BlockPlaceEvent event) {
-		if (! Util.checkPermission(event.getPlayer(), event.getBlock().getLocation(BCProtect.location), "canbuild")) {
+		if (! Util.checkPermission(event.getPlayer(), event.getBlock().getLocation(BCProtect.location), "canBuild")) {
 			event.setCancelled(true);
 		}
 	}
 
 	@EventHandler (ignoreCancelled = true)
 	public void onBlockBreak(BlockBreakEvent event) {
-		if (! Util.checkPermission(event.getPlayer(), event.getBlock().getLocation(BCProtect.location), "canbuild")) {
+		if (! Util.checkPermission(event.getPlayer(), event.getBlock().getLocation(BCProtect.location), "canBuild")) {
 			event.setCancelled(true);
 		}
 	}
@@ -42,7 +42,7 @@ public final class CanBuildListener implements Listener {
 			case REDSTONE_COMPARATOR:
 				if (! Util.checkPermission((Player)event.getPlayer(),
 						event.getClickedBlock().getLocation(BCProtect.location),
-						"canbuild")) {
+						"canBuild")) {
 					event.setCancelled(true);
 				}
 			default:
