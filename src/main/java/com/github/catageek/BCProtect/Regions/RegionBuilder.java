@@ -131,7 +131,7 @@ public final class RegionBuilder {
 		}
 		
 		// check if the next block is already protected
-		if (Util.getQuadtree(locFrom).contains(locTo.getX(), locTo.getY(), locTo.getZ())) {
+		if (Util.getQuadtree(locFrom).contains(locTo)) {
 			return;
 		}
 		
@@ -254,7 +254,7 @@ public final class RegionBuilder {
 	 * @return
 	 */
 	private static boolean containsPermission(Location loc, String permission) {
-		Set<Object> set = Util.getQuadtree(loc).get(loc.getX(), loc.getY(), loc.getZ());
+		Set<Object> set = Util.getQuadtree(loc).get(loc);
 		Iterator<Object> it = set.iterator();
 
 		while (it.hasNext()) {

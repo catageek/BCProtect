@@ -20,7 +20,7 @@ public abstract class Util {
 	}
 
 	public static boolean checkPermission(Player p, Location loc, String permission) {
-		Set<Object> set = Util.getQuadtree(loc).get(loc.getX(), loc.getY(), loc.getZ());
+		Set<Object> set = Util.getQuadtree(loc).get(loc);
 		Iterator<Object> it = set.iterator();
 
 		while (it.hasNext()) {

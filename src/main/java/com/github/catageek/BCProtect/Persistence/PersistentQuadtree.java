@@ -42,8 +42,8 @@ public final class PersistentQuadtree {
 		quadtree.put(content);
 	}
 
-	public Set<Object> get(double x, double y, double z) {
-		return quadtree.get(x, y, z);
+	public Set<Object> get(Location loc) {
+		return quadtree.get(loc.getX(), loc.getY(), loc.getZ());
 	}
 
 	public boolean contains(double x, double y, double z) {
