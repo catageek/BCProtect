@@ -36,7 +36,7 @@ public final class RegionBuilder {
 		BC8010(6,1,6,6,7,6),  // from center of router
 		BC900x(2,3,0,2,1,1),
 		BC9000(1,3,0,1,1,2),
-		BC9001(2,1,1,2,3,5),  // from sign
+		BC9001(1,1,1,1,3,5),  // from sign
 		BC7001(2,2,1,3,1,0),
 		OTHER(1,1,1,3,0,0),
 		DEFAULT(0,1,0,0,1,0); // from cart position
@@ -225,7 +225,7 @@ public final class RegionBuilder {
 		Point p = getPoint(block.getLocation());
 		if (BCProtect.debugRegions)
 			BCProtect.log.info(BCProtect.logPrefix + " Closing cuboid with point " + p.toString() + " and direction " + to.toString());
-		((Cuboid) currentContainer.getRegion()).addPoint(p);
+		((Cuboid) currentContainer.getRegion()).addPoint(p, true);
 	}
 
 	private void openCuboid(Block block1, BlockFace to, Delta delta) {
