@@ -15,3 +15,6 @@ enableMobs: false
 
 # set to false to protect chest, furnaces, hoppers, droppers,etc. against grief/robbery
 canOpenInventory: false
+
+# set to false to control player access in the area if they are not in a vehicle
+canAccess: false
