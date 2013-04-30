@@ -18,3 +18,9 @@ canOpenInventory: false
 
 # set to false to control player access in the area if they are not in a vehicle
 canAccess: false
+
+# set to false if you want to disable creation of vehicle directly in the network
+createCart: false
+
+# set to false if you want to disable destruction of vehicle directly in the network
+destroyCart: false

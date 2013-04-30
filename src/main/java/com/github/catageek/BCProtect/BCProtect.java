@@ -10,6 +10,8 @@ import com.github.catageek.BCProtect.Listeners.InventoryListener;
 import com.github.catageek.BCProtect.Listeners.MobListener;
 import com.github.catageek.BCProtect.Listeners.PistonListener;
 import com.github.catageek.BCProtect.Listeners.PlayerAccessListener;
+import com.github.catageek.BCProtect.Listeners.VehicleCreateListener;
+import com.github.catageek.BCProtect.Listeners.VehicleDestroyListener;
 import com.github.catageek.BCProtect.Persistence.QuadtreeManager;
 import com.github.catageek.BCProtect.Regions.RegionBuilder;
 
@@ -33,6 +35,8 @@ public final class BCProtect extends JavaPlugin {
 	private static boolean enableMobs;
 	private static boolean openInventory;
 	private static boolean canAccess;
+	private static boolean createCart;
+	private static boolean destroyCart;
 
 	public void onEnable(){
 		log.info("BCProtect plugin has been enabled.");
@@ -64,7 +68,12 @@ public final class BCProtect extends JavaPlugin {
 		if (! BCProtect.canAccess)
 			getServer().getPluginManager().registerEvents(new PlayerAccessListener(), this);
 
-	}
+		if (! BCProtect.createCart)
+			getServer().getPluginManager().registerEvents(new VehicleCreateListener(), this);
+
+		if (! BCProtect.destroyCart)
+			getServer().getPluginManager().registerEvents(new VehicleDestroyListener(), this);
+}
 
 	public void onDisable(){ 
 		log.info("BCProtect plugin has been disabled.");
@@ -99,6 +108,8 @@ public final class BCProtect extends JavaPlugin {
 		enableMobs = BCProtect.myPlugin.getConfig().getBoolean("enableMobs");
 		openInventory = BCProtect.myPlugin.getConfig().getBoolean("canOpenInventory");
 		canAccess = BCProtect.myPlugin.getConfig().getBoolean("canAccess");
+		createCart = BCProtect.myPlugin.getConfig().getBoolean("createCart");
+		destroyCart = BCProtect.myPlugin.getConfig().getBoolean("destroyCart");
 	}
 
 	/**
