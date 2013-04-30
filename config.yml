@@ -10,7 +10,7 @@ canBuild: false
 # set to false to prevent pistons moves
 enablePistons: false
 
-# set to false to prevent mobs spawn, attack, explode, teleport, etc.
+# set to false to prevent mobs spawn, attack, explode, teleport, collision, etc.
 enableMobs: false
 
 # set to false to protect chest, furnaces, hoppers, droppers,etc. against grief/robbery
@@ -20,7 +20,7 @@ canOpenInventory: false
 canAccess: false
 
 # set to false if you want to disable creation of vehicle directly in the network
-createCart: false
+createCart: true
 
 # set to false if you want to disable destruction of vehicle directly in the network
-destroyCart: false
+destroyCart: true

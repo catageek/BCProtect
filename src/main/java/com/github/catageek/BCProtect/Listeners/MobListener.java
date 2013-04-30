@@ -12,6 +12,7 @@ import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.entity.EntityTeleportEvent;
 import org.bukkit.event.entity.ExplosionPrimeEvent;
+import org.bukkit.event.vehicle.VehicleEntityCollisionEvent;
 
 import com.github.catageek.BCProtect.BCProtect;
 import com.github.catageek.BCProtect.Util;
@@ -25,7 +26,7 @@ public class MobListener implements Listener {
 		if (Util.getQuadtree(loc).contains(loc))
 			event.setCancelled(true);
 	}
-	
+
 	@EventHandler (ignoreCancelled = true)
 	public void onEntityExplode(EntityExplodeEvent event) {
 		Iterator<Block> it = event.blockList().iterator();
@@ -39,13 +40,13 @@ public class MobListener implements Listener {
 			}
 		}
 	}
-	
+
 	@EventHandler (ignoreCancelled = true)
 	public void onEntityTarget(EntityTargetEvent event) {
 		if (! event.getEntityType().equals(EntityType.PLAYER) && event.getTarget() != null) {
-				Location loc = event.getTarget().getLocation(BCProtect.location);
-				if (Util.getQuadtree(loc).contains(loc))
-					event.setCancelled(true);
+			Location loc = event.getTarget().getLocation(BCProtect.location);
+			if (Util.getQuadtree(loc).contains(loc))
+				event.setCancelled(true);
 		}
 	}
 
@@ -55,11 +56,21 @@ public class MobListener implements Listener {
 		if (Util.getQuadtree(loc).contains(loc))
 			event.setCancelled(true);
 	}
-	
+
 	@EventHandler (ignoreCancelled = true)
 	public void onExplosionPrime(ExplosionPrimeEvent event) {
 		Location loc = event.getEntity().getLocation(BCProtect.location);
 		if (Util.getQuadtree(loc).contains(loc))
 			event.setCancelled(true);
 	}
+
+	@EventHandler (ignoreCancelled = true)
+	public void onVehicleEntityCollision(VehicleEntityCollisionEvent event) {
+		Location loc = event.getVehicle().getLocation(BCProtect.location);
+		if (! event.getEntity().getType().equals(EntityType.PLAYER) && Util.getQuadtree(loc).contains(loc)) {
+			event.setCancelled(true);
+			event.getEntity().remove();
+		}
+	}
+
 }
