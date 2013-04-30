@@ -5,11 +5,14 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.WeakHashMap;
 
 import org.bukkit.Location;
 
 import com.github.catageek.BCProtect.BCProtect;
+import com.github.catageek.BCProtect.Util;
 import com.github.catageek.BCProtect.Quadtree.DataContainer;
 import com.github.catageek.BCProtect.Quadtree.Point;
 import com.github.catageek.BCProtect.Quadtree.Quadtree;
@@ -24,7 +27,8 @@ public final class PersistentQuadtree {
 	private SQLManager sqlmanager;
 	private Quadtree quadtree;
 
-
+	Map<Point, Set<Object>> cache = new WeakHashMap<Point, Set<Object>>();
+	
 	public PersistentQuadtree(String world) {
 		sqlmanager = new SQLManager(BCProtect.myPlugin, world, BCProtect.log);
 		createTable();
@@ -43,7 +47,14 @@ public final class PersistentQuadtree {
 	}
 
 	public Set<Object> get(Location loc) {
-		return quadtree.get(loc.getX(), loc.getY(), loc.getZ());
+		Set<Object> set;
+		if ((set = cache.get(Util.getPoint(loc))) != null) {
+			return set;
+		}
+		
+		set = quadtree.get(loc.getX(), loc.getY(), loc.getZ());
+		cache.put(Util.getPoint(loc), set);
+		return set;
 	}
 
 	public boolean contains(double x, double y, double z) {
@@ -51,11 +62,12 @@ public final class PersistentQuadtree {
 	}
 
 	public boolean contains(Location loc) {
-		return this.contains(loc.getX(), loc.getY(), loc.getZ());
+		return ! get(loc).isEmpty();
 	}
 
 	public void remove(Point p) {
 		quadtree.remove(p);
+		cache.clear();
 		this.removeSQL(p);
 	}
 
