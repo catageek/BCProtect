@@ -9,6 +9,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
 import com.github.catageek.BCProtect.Persistence.PersistentQuadtree;
+import com.github.catageek.BCProtect.Quadtree.Point;
 
 public abstract class Util {
 	public static PersistentQuadtree getQuadtree(Block b) {
@@ -38,5 +39,8 @@ public abstract class Util {
 		if (player.isOnline())
 			player.sendMessage(ChatColor.DARK_GREEN+"[BCProtect] " + ChatColor.RED + message);
 	}
-
+	
+	public static Point getPoint(Location loc) {
+		return new Point(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
+	}
 }

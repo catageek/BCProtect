@@ -8,7 +8,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 
-import com.github.catageek.BCProtect.Regions.RegionBuilder;
 import com.github.catageek.ByteCart.Event.UpdaterMoveEvent;
 import com.github.catageek.ByteCart.Event.UpdaterPassRouterEvent;
 import com.github.catageek.ByteCart.Event.UpdaterPassStationEvent;
@@ -37,7 +36,7 @@ final class BCProtectListener implements Listener {
 
 	@EventHandler (ignoreCancelled = true, priority = EventPriority.MONITOR)
 	public void onBlockBreak(BlockBreakEvent event) {
-		Util.getQuadtree(event.getBlock()).remove(RegionBuilder.getPoint(BCProtect.location));
+		Util.getQuadtree(event.getBlock()).remove(Util.getPoint(BCProtect.location));
 	}
 	
 

@@ -55,7 +55,7 @@ public final class RegionBuilder {
 
 	public void onPassRouter(Location loc, BlockFace from, BlockFace to, String name, Level level) {
 		// reference point is the chest
-		Point p = getPoint(loc.getBlock().getRelative(BlockFace.UP, 5).getLocation());
+		Point p = Util.getPoint(loc.getBlock().getRelative(BlockFace.UP, 5).getLocation());
 
 		if (level.equals(Level.REGION) || level.equals(Level.BACKBONE)) {
 			if (BCProtect.debugRegions)
@@ -101,7 +101,7 @@ public final class RegionBuilder {
 	 * @param to the side of the sign
 	 */
 	private void postPassRouter(Location loc, BlockFace to) {
-		currentContainer.setPoint(getPoint(loc.getBlock().getRelative(to, 6).
+		currentContainer.setPoint(Util.getPoint(loc.getBlock().getRelative(to, 6).
 				getRelative(MathUtil.clockwise(to))
 				.getLocation(BCProtect.location)));
 
@@ -171,7 +171,7 @@ public final class RegionBuilder {
 		DataContainer save = currentContainer;
 		
 		// put the box
-		Point p = getPoint(location);		
+		Point p = Util.getPoint(location);		
 
 		currentContainer = new DataContainer(new Cuboid(p, name), p);
 
@@ -210,9 +210,6 @@ public final class RegionBuilder {
 		this.state = state;
 	}
 
-	public static Point getPoint(Location loc) {
-		return new Point(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
-	}
 
 	private void closeCuboid(Block block1, BlockFace to, Delta delta) {
 		Block block = block1;
@@ -222,7 +219,7 @@ public final class RegionBuilder {
 			block = block.getRelative(BlockFace.UP, delta.py);
 		if (delta.pz != 0)
 			block = block.getRelative(to, delta.pz);
-		Point p = getPoint(block.getLocation());
+		Point p = Util.getPoint(block.getLocation());
 		if (BCProtect.debugRegions)
 			BCProtect.log.info(BCProtect.logPrefix + " Closing cuboid with point " + p.toString() + " and direction " + to.toString());
 		((Cuboid) currentContainer.getRegion()).addPoint(p, true);
@@ -238,7 +235,7 @@ public final class RegionBuilder {
 			block = block.getRelative(BlockFace.DOWN, delta.ny);
 		if (delta.nz != 0)
 			block = block.getRelative(to.getOppositeFace(), delta.nz);
-		Point p = getPoint(block.getLocation());
+		Point p = Util.getPoint(block.getLocation());
 		if (BCProtect.debugRegions)
 			BCProtect.log.info(BCProtect.logPrefix + " Opening cuboid with point " + p.toString() + " and direction " + to.toString());
 		Cuboid cub = new Cuboid(p, currentContainer.getData());
