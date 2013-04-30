@@ -5,7 +5,7 @@ debugQuadtree: false
 debugRegions: false
 
 # set false to protect the network against grief
-canbuild: false
+canBuild: false
 
 # set to false to prevent pistons moves
 enablePistons: false

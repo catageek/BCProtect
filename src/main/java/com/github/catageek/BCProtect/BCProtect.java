@@ -26,7 +26,7 @@ public final class BCProtect extends JavaPlugin {
 	private static RegionBuilder rb;
 	private static QuadtreeManager qm;
 
-	private static boolean canbuild;
+	private static boolean canBuild;
 	public static String permprefix = "bytecart.";
 	public static Location location = new Location(null, 0, 0, 0);
 	private static boolean enablePistons;
@@ -49,7 +49,7 @@ public final class BCProtect extends JavaPlugin {
 
 		getServer().getPluginManager().registerEvents(new BCProtectListener(), this);
 
-		if (! BCProtect.canbuild)
+		if (! BCProtect.canBuild)
 			getServer().getPluginManager().registerEvents(new CanBuildListener(), this);
 
 		if (! BCProtect.enablePistons)
@@ -94,7 +94,7 @@ public final class BCProtect extends JavaPlugin {
 			log.info("ByteCart : debug mode on regions is on.");
 		}
 
-		canbuild = BCProtect.myPlugin.getConfig().getBoolean("canbuild");
+		canBuild = BCProtect.myPlugin.getConfig().getBoolean("canBuild");
 		enablePistons = BCProtect.myPlugin.getConfig().getBoolean("enablePistons");
 		enableMobs = BCProtect.myPlugin.getConfig().getBoolean("enableMobs");
 		openInventory = BCProtect.myPlugin.getConfig().getBoolean("canOpenInventory");

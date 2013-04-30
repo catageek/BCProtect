@@ -25,7 +25,6 @@ public final class CanBuildListener implements Listener {
 	public void onBlockBreak(BlockBreakEvent event) {
 		if (! Util.checkPermission(event.getPlayer(), event.getBlock().getLocation(BCProtect.location), "canbuild")) {
 			event.setCancelled(true);
-			return;
 		}
 	}
 	
@@ -45,7 +44,6 @@ public final class CanBuildListener implements Listener {
 						event.getClickedBlock().getLocation(BCProtect.location),
 						"canbuild")) {
 					event.setCancelled(true);
-					return;
 				}
 			default:
 				break;
