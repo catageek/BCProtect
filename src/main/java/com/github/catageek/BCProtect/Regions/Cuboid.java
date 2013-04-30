@@ -16,10 +16,10 @@ import com.github.catageek.BCProtect.Quadtree.Region;
  * inferior to Point B coordinates
  */
 public final class Cuboid implements Region, Cloneable {
-	
+
 	private List<Point> list = new ArrayList<Point>();
 	private Object data;
-	
+
 	/* (non-Javadoc)
 	 * @see com.github.catageek.BCProtect.Quadtree.Region#nullData()
 	 */
@@ -39,19 +39,19 @@ public final class Cuboid implements Region, Cloneable {
 			throw new IllegalArgumentException("Object stored can't be null.");
 		this.data = object;
 	}
-	
+
 	/**
 	 * Add the second point
 	 *
 	 * @param b1 second point
 	 */
-	public Cuboid addPoint(Point b1) {
+	public Cuboid addPoint(Point b1, boolean addborder) {
 		if (list.size() != 1)
 			throw new IllegalArgumentException("No more than 2 points must be defined.");
 		// Swap coordinates if necessary
 		Point a = getA();
 		Point b = b1.clone();
-		
+
 		int ax = a.getX();
 		if (ax > b.getX()) {
 			// swap x
@@ -72,12 +72,14 @@ public final class Cuboid implements Region, Cloneable {
 			a.setZ(b.getZ());
 			b.setZ(az);
 		}
-		
-		// b is the outside border so we increment it
-		b.setX(b.getX() + 1);
-		b.setY(b.getY() + 1);
-		b.setZ(b.getZ() + 1);
-		
+
+		if (addborder) {
+			// b is the outside border so we increment it
+			b.setX(b.getX() + 1);
+			b.setY(b.getY() + 1);
+			b.setZ(b.getZ() + 1);
+		}
+
 		list.set(0, a);
 		list.add(b);
 		return this;
@@ -94,7 +96,7 @@ public final class Cuboid implements Region, Cloneable {
 			BCProtect.log.info(BCProtect.logPrefix + " Checking if " + this.toString() + " is colliding horizontal axis at " + z + " : " + ret);
 		return ret;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see com.github.catageek.BCProtect.Quadtree.Region#isCollidingZAxis(int)
 	 */
@@ -114,7 +116,7 @@ public final class Cuboid implements Region, Cloneable {
 		return list.listIterator();
 	}
 
-	
+
 	/* (non-Javadoc)
 	 * @see com.github.catageek.BCRegions.Region#isInsideRegion(double, double)
 	 */
@@ -159,7 +161,7 @@ public final class Cuboid implements Region, Cloneable {
 	public String toString() {
 		return getA().toString() + "x" + getB().toString();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#clone()
 	 */
@@ -176,7 +178,7 @@ public final class Cuboid implements Region, Cloneable {
 		c.list = (List<Point>) ((ArrayList<Point>)list).clone();
 		return c;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder(29,43).append(getA()).append(getB()).append(getData()).toHashCode();

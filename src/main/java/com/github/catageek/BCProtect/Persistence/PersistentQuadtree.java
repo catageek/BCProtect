@@ -118,7 +118,7 @@ public final class PersistentQuadtree {
 				while (rep1.next()) {
 					a.setX(rep1.getInt("ax")).setY(rep1.getInt("ay")).setZ(rep1.getInt("az"));
 					Cuboid cub = new Cuboid(a, rep1.getString("perm"));
-					cub.addPoint(b.setX(rep1.getInt("bx")).setY(rep1.getInt("by")).setZ(rep1.getInt("bz")));
+					cub.addPoint(b.setX(rep1.getInt("bx")).setY(rep1.getInt("by")).setZ(rep1.getInt("bz")), false);
 					if (BCProtect.debugQuadtree)
 						BCProtect.log.info(BCProtect.logPrefix + " cuboid " + cub.toString());
 					dclist.add(new DataContainer(cub,r));
