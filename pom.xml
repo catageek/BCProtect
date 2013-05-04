@@ -65,7 +65,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<bukkit.version>1.5.1-R0.2</bukkit.version>
-		<bytecart.version>1.4.4</bytecart.version>
+		<bytecart.version>1.4.5-SNAPSHOT</bytecart.version>
 	</properties>
 	<dependencies>
 		<dependency>
