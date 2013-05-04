@@ -180,6 +180,18 @@ public final class RegionBuilder {
 		// restore variable
 		currentContainer = save;
 	}
+	
+	/**
+	 * Called if a player creates a BC9001 sign
+	 *
+	 * @param location the location of the sign
+	 * @param to the direction
+	 * @param name
+	 */
+	public void onCreateStation(Location location, BlockFace to,
+			String name) {
+		this.onPassStation(location, to, name, Level.LOCAL);
+	}
 
 	private void storeBox(Location location, BlockFace to, Point p, Delta delta) {
 		this.openCuboid(location.getBlock(), to, delta);
@@ -261,5 +273,4 @@ public final class RegionBuilder {
 		}
 		return false;
 	}
-
 }
