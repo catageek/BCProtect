@@ -1,13 +1,13 @@
 package com.github.catageek.BCProtect.Listeners;
 
 import org.bukkit.Material;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Vehicle;
+import org.bukkit.entity.minecart.StorageMinecart;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import com.github.catageek.BCProtect.BCProtect;
 import com.github.catageek.BCProtect.Util;
@@ -36,17 +36,19 @@ public class InventoryListener implements Listener {
 			}
 		}
 	}
-	
-	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
-	public void onInventoryOpen(InventoryOpenEvent event) {
-		
-		if (!(event.getInventory().getHolder() instanceof Vehicle)) {
-			return;
-		}
-		if (! Util.checkPermission((Player)event.getPlayer(),
-				((Vehicle)event.getInventory().getHolder()).getLocation(BCProtect.location),
-				"openchest")) {
-			event.setCancelled(true);
+
+	@EventHandler (ignoreCancelled = true)
+	public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
+
+		Entity entity;
+
+		if ((entity = event.getRightClicked()) instanceof StorageMinecart) {
+
+			if (! Util.checkPermission((Player)event.getPlayer(),
+					((StorageMinecart) entity).getLocation(BCProtect.location),
+					"openchest")) {
+				event.setCancelled(true);
+			}
 		}
 	}
 }
