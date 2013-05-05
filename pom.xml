@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.github.catageek</groupId>
 	<artifactId>BCProtect</artifactId>
-	<version>1.0.3-SNAPSHOT</version>
+	<version>1.0.3</version>
 	<name>BCProtect</name>
 
 	<repositories>
@@ -64,8 +64,8 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<bukkit.version>1.5.1-R0.2</bukkit.version>
-		<bytecart.version>1.4.5-SNAPSHOT</bytecart.version>
+		<bukkit.version>1.5.2-R0.1</bukkit.version>
+		<bytecart.version>1.5.0</bytecart.version>
 	</properties>
 	<dependencies>
 		<dependency>
