@@ -5,6 +5,7 @@ import java.util.logging.Logger;
 import org.bukkit.Location;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.github.catageek.BCProtect.Listeners.BCProtectListener;
 import com.github.catageek.BCProtect.Listeners.CanBuildListener;
 import com.github.catageek.BCProtect.Listeners.InventoryListener;
 import com.github.catageek.BCProtect.Listeners.MobListener;
@@ -13,7 +14,6 @@ import com.github.catageek.BCProtect.Listeners.PlayerAccessListener;
 import com.github.catageek.BCProtect.Listeners.VehicleCreateListener;
 import com.github.catageek.BCProtect.Listeners.VehicleDestroyListener;
 import com.github.catageek.BCProtect.Persistence.QuadtreeManager;
-import com.github.catageek.BCProtect.Regions.RegionBuilder;
 
 public final class BCProtect extends JavaPlugin {
 	public static Logger log = Logger.getLogger("Minecraft");
@@ -25,7 +25,6 @@ public final class BCProtect extends JavaPlugin {
 	public static int minLeaf = 16;
 	public static int initLeaf = 512;
 	public static int MaxListSize = 16;
-	private static RegionBuilder rb;
 	private static QuadtreeManager qm;
 
 	private static boolean canBuild;
@@ -48,8 +47,6 @@ public final class BCProtect extends JavaPlugin {
 		this.loadConfig();
 		
 		setQm(new QuadtreeManager());
-
-		rb = new RegionBuilder();
 
 		getServer().getPluginManager().registerEvents(new BCProtectListener(), this);
 
@@ -82,11 +79,6 @@ public final class BCProtect extends JavaPlugin {
 		qm = null;
 		myPlugin = null;
 		log = null;
-
-	}
-
-	public static RegionBuilder getRegionBuilder() {
-		return rb;
 
 	}
 

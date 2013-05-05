@@ -5,11 +5,16 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 import com.github.catageek.BCProtect.BCProtect;
+import com.github.catageek.BCProtect.Regions.RegionBuilder;
+import com.github.catageek.BCProtect.Regions.RegionBuilderFactory;
 import com.github.catageek.ByteCart.Event.UpdaterPassRouterEvent;
 import com.github.catageek.ByteCart.Event.UpdaterPassStationEvent;
 
 public final class UpdaterListener implements Listener {
 	
+	UpdaterListener() {
+	}
+
 	private UpdaterMoveListener updatermovelistener;
 
 	@EventHandler
@@ -18,14 +23,20 @@ public final class UpdaterListener implements Listener {
 			updatermovelistener = new UpdaterMoveListener();
 			Bukkit.getServer().getPluginManager().registerEvents(updatermovelistener, BCProtect.myPlugin);
 		}
-		BCProtect.getRegionBuilder().onPassRouter(event.getIc().getBlock().getLocation(BCProtect.location),
+		getRegionBuilder(event.getVehicleId()).onPassRouter(event.getCenter().getLocation(BCProtect.location),
 				event.getFrom(), event.getTo(), event.getIc().getName(), event.getUpdaterLevel());
 	}
 
 	@EventHandler
 	public void onUpdaterPassStation(UpdaterPassStationEvent event) {
-		BCProtect.getRegionBuilder().onPassStation(event.getIc().getBlock().getLocation(BCProtect.location),
+		getRegionBuilder(event.getVehicleId()).onPassStation(event.getIc().getBlock().getLocation(BCProtect.location),
 				event.getIc().getCardinal().getOppositeFace(), event.getIc().getName(), event.getUpdaterLevel());
 	}
-	
+
+	/**
+	 * @return a regionbuilder
+	 */
+	static RegionBuilder getRegionBuilder(int id) {
+		return RegionBuilderFactory.getRegionBuilder(id);
+	}
 }

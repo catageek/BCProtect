@@ -5,16 +5,19 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
-import com.github.catageek.BCProtect.BCProtect;
 import com.github.catageek.ByteCart.Event.UpdaterMoveEvent;
 
 public class UpdaterMoveListener implements Listener {
+
+	UpdaterMoveListener() {
+	}
+
 
 	@EventHandler
 	public void onUpdaterMove(UpdaterMoveEvent event) {
 		Location from = event.getEvent().getFrom();
 		Location to = event.getEvent().getTo();
-		BCProtect.getRegionBuilder().onMove(from, to, this.getDirection(from, to));
+		UpdaterListener.getRegionBuilder(event.getEvent().getVehicle().getEntityId()).onMove(from, to, this.getDirection(from, to));
 	}
 
 	private BlockFace getDirection(Location from, Location to) {

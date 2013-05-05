@@ -20,6 +20,9 @@ import com.github.catageek.ByteCart.Util.MathUtil;
  */
 public final class RegionBuilder {
 
+	RegionBuilder() {
+	}
+
 	private State state = State.UNDEFINED;
 	private DataContainer currentContainer;
 	private BlockFace currentDirection;

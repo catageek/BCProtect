@@ -1,4 +1,4 @@
-package com.github.catageek.BCProtect;
+package com.github.catageek.BCProtect.Listeners;
 
 
 import org.bukkit.Bukkit;
@@ -7,15 +7,18 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 
-import com.github.catageek.BCProtect.Listeners.UpdaterListener;
+import com.github.catageek.BCProtect.BCProtect;
+import com.github.catageek.BCProtect.Util;
+import com.github.catageek.BCProtect.Regions.RegionBuilderFactory;
 import com.github.catageek.ByteCart.Event.SignCreateEvent;
+import com.github.catageek.ByteCart.Event.UpdaterCreateEvent;
 
-final class BCProtectListener implements Listener {
+public final class BCProtectListener implements Listener {
 
 	private UpdaterListener updaterlistener;
 
 	@EventHandler (ignoreCancelled = true, priority = EventPriority.MONITOR)
-	public void onUpdaterCreate(BlockBreakEvent event) {
+	public void onUpdaterCreate(UpdaterCreateEvent event) {
 		if(updaterlistener == null) {
 			updaterlistener = new UpdaterListener();
 			Bukkit.getServer().getPluginManager().registerEvents(updaterlistener, BCProtect.myPlugin);
@@ -31,7 +34,7 @@ final class BCProtectListener implements Listener {
 	public void onSignCreate(SignCreateEvent event) {
 		String name;
 		if ((name = event.getStrings()[1]).equals("BC9001"))
-			BCProtect.getRegionBuilder().onCreateStation(event.getIc().getBlock().getLocation(BCProtect.location),
+			RegionBuilderFactory.getTempRegionBuilder().onCreateStation(event.getIc().getBlock().getLocation(BCProtect.location),
 					event.getIc().getCardinal().getOppositeFace(), name);
 	}
 
