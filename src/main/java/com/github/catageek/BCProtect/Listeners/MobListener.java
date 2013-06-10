@@ -67,7 +67,15 @@ public class MobListener implements Listener {
 	@EventHandler (ignoreCancelled = true)
 	public void onVehicleEntityCollision(VehicleEntityCollisionEvent event) {
 		Location loc = event.getVehicle().getLocation(BCProtect.location);
-		if (! event.getEntity().getType().equals(EntityType.PLAYER) && Util.getQuadtree(loc).contains(loc)) {
+		EntityType type = event.getEntity().getType();
+		if (! type.equals(EntityType.PLAYER)
+				&& ! type.equals(EntityType.MINECART)
+				&& ! type.equals(EntityType.MINECART_CHEST)
+				&& ! type.equals(EntityType.MINECART_FURNACE)
+				&& ! type.equals(EntityType.MINECART_HOPPER)
+				&& ! type.equals(EntityType.MINECART_MOB_SPAWNER)
+				&& ! type.equals(EntityType.MINECART_TNT)
+				&& Util.getQuadtree(loc).contains(loc)) {
 			event.setCancelled(true);
 			event.getEntity().remove();
 		}
