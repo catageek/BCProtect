@@ -23,7 +23,7 @@ public class MobListener implements Listener {
 	@EventHandler (ignoreCancelled = true)
 	public void onCreatureSpawn(CreatureSpawnEvent event) {
 		Location loc = event.getLocation();
-		if (Util.getQuadtree(loc).contains(loc))
+		if (loc != null && Util.getQuadtree(loc).contains(loc))
 			event.setCancelled(true);
 	}
 
