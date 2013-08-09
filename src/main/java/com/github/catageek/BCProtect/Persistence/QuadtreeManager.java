@@ -16,9 +16,13 @@ public final class QuadtreeManager {
 		Iterator<World> it = BCProtect.myPlugin.getServer().getWorlds().iterator();
 		while (it.hasNext()) {
 			String s = it.next().getName();
-			quadtreeList.put(s, new PersistentQuadtree(s));
+			addWorld(s);
 		}
 
+	}
+
+	public void addWorld(String s) {
+		quadtreeList.put(s, new PersistentQuadtree(s));
 	}
 	
 	public PersistentQuadtree getQuadtree(String world) {

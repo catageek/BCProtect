@@ -6,6 +6,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.world.WorldInitEvent;
 
 import com.github.catageek.BCProtect.BCProtect;
 import com.github.catageek.BCProtect.Util;
@@ -37,6 +38,9 @@ public final class BCProtectListener implements Listener {
 			RegionBuilderFactory.getTempRegionBuilder().onCreateStation(event.getIc().getBlock().getLocation(BCProtect.location),
 					event.getIc().getCardinal().getOppositeFace(), name);
 	}
-
-
+	
+	@EventHandler (ignoreCancelled = true, priority = EventPriority.MONITOR)
+	public void onWorldInit(WorldInitEvent event) {
+		BCProtect.getQuadtreeManager().addWorld(event.getWorld().getName());
+	}
 }
