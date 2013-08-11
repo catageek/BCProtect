@@ -2,6 +2,7 @@ package com.github.catageek.BCProtect.Regions;
 
 import java.util.Iterator;
 import java.util.Set;
+import java.util.Stack;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -27,22 +28,25 @@ public final class RegionBuilder {
 	private DataContainer currentContainer;
 	private BlockFace currentDirection;
 
+	// stack for storing the stack of attached points of nested subnets
+	private final Stack<Point> stackpoints = new Stack<Point>();
+
 	private enum State {
-		READY,
-		WAIT,
-		UNDEFINED;
+		READY,	// ready to initialize cuboid
+		WAIT,	// cuboid initialized, waiting to close
+		UNDEFINED;	// waiting the conditions to initialize cuboid
 	}
 
 	// the boxes around components and rails
 	// negative x,y,z, positive x,y,z
 	private enum Delta {
 		BC8010(6,1,6,6,7,6),  // from center of router
-		BC900x(2,3,0,2,1,1),
-		BC9000(1,3,0,1,1,2),
+		BC900x(1,1,0,1,3,2),
+		BC9000(1,1,0,1,3,2),
 		BC9001(1,1,1,1,3,5),  // from sign
 		BC7001(2,2,1,3,1,0),
 		OTHER(1,1,1,3,0,0),
-		DEFAULT(0,1,0,0,1,0); // from cart position
+		DEFAULT(0,3,0,0,1,0); // from cart position
 
 		private int nx,ny,nz,px,py,pz;
 
@@ -60,7 +64,7 @@ public final class RegionBuilder {
 		// reference point is the chest
 		Point p = Util.getPoint(loc.getBlock().getRelative(BlockFace.UP, 5).getLocation());
 
-		if (level.equals(Level.REGION) || level.equals(Level.BACKBONE)) {
+		if (level.equals(Level.LOCAL)) {
 			if (BCProtect.debugRegions)
 				BCProtect.log.info(BCProtect.logPrefix + " found router at pos " + loc.toString() + ", going to " + to.toString());
 
@@ -70,30 +74,32 @@ public final class RegionBuilder {
 						.getRelative(BlockFace.UP, 2),
 						from.getOppositeFace(), Delta.DEFAULT);
 				Util.getQuadtree(loc).put(currentContainer);
-				this.setState(State.READY);
 			}
-		}
-
-		// we initialize the variable here, especially reference point
-		// All updaters (even local) execute this 
-		if (getState().equals(State.UNDEFINED)) {
-			currentContainer = new DataContainer(new Cuboid(p, name), p);
-			setState(State.READY);
+			String myname = name.equals("BC8010") ? "BC9256" : name;
+			currentContainer = new DataContainer(new Cuboid(p, myname), p);
+			this.setState(State.READY);
+			// give a new reference point
+			postPassRouter(loc, to);
+			return;
 		}
 
 		if (level.equals(Level.REGION) || level.equals(Level.BACKBONE)) {
-			
+			// we initialize the variable here, especially reference point
+			if (getState().equals(State.UNDEFINED)) {
+				currentContainer = new DataContainer(new Cuboid(p, name), p);
+			}
+
+
 			// we already stored the router area ? give output sign as reference point and finish
 			if (RegionBuilder.containsPermission(loc, name)) {
-				postPassRouter(loc, to);
+//				postPassRouter(loc, to);
 				return;
 			}
 
 			// otherwise we store the box around the router
 			this.storeBox(loc, to, p, Delta.BC8010);
+			return;
 		}
-		// give a new reference point
-		postPassRouter(loc, to);
 	}
 
 	/**
@@ -104,15 +110,18 @@ public final class RegionBuilder {
 	 * @param to the side of the sign
 	 */
 	private void postPassRouter(Location loc, BlockFace to) {
-		currentContainer.setPoint(Util.getPoint(loc.getBlock().getRelative(to, 6).
+		Point point = Util.getPoint(loc.getBlock().getRelative(to, 6).
 				getRelative(MathUtil.clockwise(to))
-				.getLocation(BCProtect.location)));
+				.getLocation(BCProtect.location));
+		currentContainer.setPoint(point);
+		stackpoints.clear();
+		stackpoints.push(point);
 
 		if (BCProtect.debugRegions)
 			BCProtect.log.info(BCProtect.logPrefix + " setting ref point to " + currentContainer.getAttachedPoint().toString());
 	}
 
-	
+
 	/**
 	 * Here we put the default box around rails
 	 *
@@ -132,12 +141,12 @@ public final class RegionBuilder {
 			Util.getQuadtree(locFrom).put(currentContainer);
 			this.setState(State.READY);
 		}
-		
+
 		// check if the next block is already protected
 		if (Util.getQuadtree(locFrom).contains(locTo)) {
 			return;
 		}
-		
+
 		// otherwise we open a new cuboid
 		if (this.getState().equals(State.READY)) {
 			this.openCuboid(locTo.getBlock(), to, Delta.DEFAULT);
@@ -155,9 +164,9 @@ public final class RegionBuilder {
 	 * @param name the name of the station sign (BC9001)
 	 * @param level the level of the updater : local, region or backbone
 	 */
-	public void onPassStation(Location location, BlockFace to, String name, Level level) {
+	public void onPassStation(Location location, BlockFace to, String name) {
 
-		if (getState().equals(State.UNDEFINED) || ! level.equals(Level.LOCAL))
+		if (getState().equals(State.UNDEFINED))
 			return;
 
 
@@ -172,18 +181,86 @@ public final class RegionBuilder {
 
 		// Save the current variable
 		DataContainer save = currentContainer;
-		
+
 		// put the box
 		Point p = Util.getPoint(location);		
 
 		currentContainer = new DataContainer(new Cuboid(p, name), p);
 
 		storeBox(location, to, p, Delta.BC9001);
-		
+		// cuboid complete, next
+		setState(State.READY);
+
+
 		// restore variable
 		currentContainer = save;
 	}
-	
+
+	public void onEnterSubnet(Location location, BlockFace to, String name) {
+
+		if (getState().equals(State.UNDEFINED))
+			return;
+
+
+		if (BCProtect.debugRegions)
+			BCProtect.log.info(BCProtect.logPrefix + " entering subnet at pos " + location.toString()
+					+ ", going to " + to.toString() + " with name " + name);
+
+		// put the box
+		Point p = Util.getPoint(location);		
+
+		stackpoints.push(p);
+
+		// cuboid complete, next
+		setState(State.READY);
+
+		currentContainer = new DataContainer(new Cuboid(p, name), p);
+
+		// check if we already stored this area for this permission
+		if (RegionBuilder.containsPermission(location, name)) {
+			return;
+		}
+
+		storeBox(location, to, p, Delta.BC900x);
+
+	}
+
+	public void onLeaveSubnet(Location location, BlockFace to, String name) {
+
+		if (getState().equals(State.UNDEFINED))
+			return;
+
+
+		if (BCProtect.debugRegions)
+			BCProtect.log.info(BCProtect.logPrefix + " Leaving subnet at pos " + location.toString()
+					+ ", going to " + to.toString() + " with next name " + name);
+
+		// we close the current cuboid if any
+		if (getState().equals(State.WAIT)) {
+			this.closeCuboid(location.getBlock().getRelative(to.getOppositeFace()).getRelative(MathUtil.clockwise(to))
+					.getRelative(BlockFace.UP, 2),
+					to, Delta.DEFAULT);
+			Util.getQuadtree(location).put(currentContainer);
+		}
+
+		// put the box
+		//Point p = Util.getPoint(location);
+		Point p = stackpoints.pop();
+
+		// cuboid complete, next
+		setState(State.READY);
+
+		currentContainer.setPoint(p);
+
+		// check if we already stored this area for this permission
+		if (RegionBuilder.containsPermission(location, (String) currentContainer.getData())) {
+			return;
+		}
+
+		storeBox(location, to, p, Delta.BC900x);
+
+	}
+
 	/**
 	 * Called if a player creates a BC9001 sign
 	 *
@@ -193,7 +270,7 @@ public final class RegionBuilder {
 	 */
 	public void onCreateStation(Location location, BlockFace to,
 			String name) {
-		this.onPassStation(location, to, name, Level.LOCAL);
+		this.onPassStation(location, to, name);
 	}
 
 	private void storeBox(Location location, BlockFace to, Point p, Delta delta) {
@@ -207,8 +284,6 @@ public final class RegionBuilder {
 			BCProtect.log.info(BCProtect.logPrefix + " Inserting box cuboid " + currentContainer.getRegion());
 		Util.getQuadtree(location).put(currentContainer);
 
-		// cuboid complete, next
-		setState(State.READY);
 	}
 
 	/**
@@ -252,7 +327,7 @@ public final class RegionBuilder {
 			block = block.getRelative(to.getOppositeFace(), delta.nz);
 		Point p = Util.getPoint(block.getLocation());
 		if (BCProtect.debugRegions)
-			BCProtect.log.info(BCProtect.logPrefix + " Opening cuboid with point " + p.toString() + " and direction " + to.toString());
+			BCProtect.log.info(BCProtect.logPrefix + " Opening cuboid " + (String) currentContainer.getData() + " with point " + p.toString() + " and direction " + to.toString());
 		Cuboid cub = new Cuboid(p, currentContainer.getData());
 		currentContainer.setRegion(cub);
 	}
