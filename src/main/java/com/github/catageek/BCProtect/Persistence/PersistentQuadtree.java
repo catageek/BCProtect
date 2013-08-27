@@ -44,6 +44,7 @@ public final class PersistentQuadtree {
 	public void put(DataContainer content) {
 		this.addRegionToSQL(content.getRegion(), content.getAttachedPoint());
 		quadtree.put(content);
+		cache.clear();
 	}
 
 	public Set<Object> get(Location loc) {

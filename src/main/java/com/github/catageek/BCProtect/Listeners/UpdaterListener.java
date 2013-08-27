@@ -30,7 +30,7 @@ public final class UpdaterListener implements Listener {
 	@EventHandler
 	public void onUpdaterPassStation(UpdaterPassStationEvent event) {
 		getRegionBuilder(event.getVehicleId()).onPassStation(event.getIc().getBlock().getLocation(BCProtect.location),
-				event.getIc().getCardinal().getOppositeFace(), event.getIc().getName(), event.getUpdaterLevel());
+				event.getIc().getCardinal(), event.getIc().getName(), event.getUpdaterLevel());
 	}
 
 	/**
