@@ -12,8 +12,8 @@ import com.github.catageek.BCProtect.BCProtect;
 import com.github.catageek.BCProtect.Util;
 import com.github.catageek.BCProtect.Quadtree.DataContainer;
 import com.github.catageek.BCProtect.Quadtree.Point;
-import com.github.catageek.ByteCart.Routing.Updater.Level;
-import com.github.catageek.ByteCart.Util.MathUtil;
+import com.github.catageek.ByteCartAPI.Util.MathUtil;
+import com.github.catageek.ByteCartAPI.Wanderer.Wanderer.Level;
 
 
 /**

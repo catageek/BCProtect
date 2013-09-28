@@ -11,8 +11,8 @@ import org.bukkit.event.world.WorldInitEvent;
 import com.github.catageek.BCProtect.BCProtect;
 import com.github.catageek.BCProtect.Util;
 import com.github.catageek.BCProtect.Regions.RegionBuilderFactory;
-import com.github.catageek.ByteCart.Event.SignCreateEvent;
-import com.github.catageek.ByteCart.Event.UpdaterCreateEvent;
+import com.github.catageek.ByteCartAPI.Event.SignCreateEvent;
+import com.github.catageek.ByteCartAPI.Event.UpdaterCreateEvent;
 
 public final class BCProtectListener implements Listener {
 

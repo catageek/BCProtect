@@ -16,12 +16,14 @@
 			<url>http://repo.bukkit.org/content/groups/public</url>
 		</repository>
 		<repository>
-			<id>bytecart-repo</id>
-			<url>http://bytecart.catageek.info/maven/repositories/releases/</url>
+			<id>repobcapi-rel</id>
+			<name>bytecart.catageek.info API Releases</name>
+			<url>http://bytecart.catageek.info/mavenAPI/repositories/releases/</url>
 		</repository>
 		<repository>
-			<id>bytecart-reposnap</id>
-			<url>http://bytecart.catageek.info/maven/repositories/snapshots/</url>
+			<id>repobcapi-snap</id>
+			<name>bytecart.catageek.info API Snapshots</name>
+			<url>http://bytecart.catageek.info/mavenAPI/repositories/snapshots/</url>
 		</repository>
 	</repositories>
 
@@ -65,7 +67,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<bukkit.version>1.6.2-R0.1-SNAPSHOT</bukkit.version>
-		<bytecart.version>2.1.1</bytecart.version>
+		<bytecartapi.version>2.6.1-SNAPSHOT</bytecartapi.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -75,8 +77,9 @@
 		</dependency>
 		<dependency>
 			<groupId>com.github.catageek</groupId>
-			<artifactId>ByteCart</artifactId>
-			<version>${bytecart.version}</version>
+			<artifactId>ByteCartAPI</artifactId>
+			<version>${bytecartapi.version}</version>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>external-lib</groupId>

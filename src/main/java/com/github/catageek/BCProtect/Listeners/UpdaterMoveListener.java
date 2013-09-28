@@ -5,7 +5,8 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
-import com.github.catageek.ByteCart.Event.UpdaterMoveEvent;
+import com.github.catageek.ByteCartAPI.Event.UpdaterMoveEvent;
+
 
 public class UpdaterMoveListener implements Listener {
 
